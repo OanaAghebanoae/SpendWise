@@ -1,8 +1,21 @@
+using Microsoft.EntityFrameworkCore;
+using SpendWise.Data;
+using SpendWise.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<SpendWiseDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ApplicationManagementDatabase")));
+builder.Services.AddProblemDetails();
+builder.Services.AddScoped<TransactionService>();
+builder.Services.AddScoped<ImportService>();
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<ReportService>();
+builder.Services.AddScoped<ICsvTransactionParser, IngCsvTransactionParser>();
+builder.Services.AddScoped<ITransactionClassifier, MockTransactionClassifier>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -14,6 +27,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

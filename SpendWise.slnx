@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="SpendWise.csproj" />
+  <Project Path="SpendWise.Tests/SpendWise.Tests.csproj" />
 </Solution>
