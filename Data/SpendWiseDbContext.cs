@@ -8,6 +8,7 @@ public sealed class SpendWiseDbContext(DbContextOptions<SpendWiseDbContext> opti
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<Category> Categories => Set<Category>();
     public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
+    public DbSet<CategoryRule> CategoryRules => Set<CategoryRule>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,16 @@ public sealed class SpendWiseDbContext(DbContextOptions<SpendWiseDbContext> opti
         {
             entity.HasKey(x => x.Id);
             entity.Property(x => x.FileName).HasMaxLength(260).IsRequired();
+        });
+
+        modelBuilder.Entity<CategoryRule>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Field).HasConversion<string>().HasMaxLength(50);
+            entity.Property(x => x.Match).HasConversion<string>().HasMaxLength(50);
+            entity.Property(x => x.Pattern).HasMaxLength(200).IsRequired();
+            entity.HasIndex(x => new { x.Field, x.Match, x.Pattern }).IsUnique();
+            entity.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

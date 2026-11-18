@@ -17,7 +17,7 @@ builder.Services.AddScoped<ImportService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<ICsvTransactionParser, IngCsvTransactionParser>();
-builder.Services.AddScoped<ITransactionClassifier, MockTransactionClassifier>();
+builder.Services.AddScoped<ITransactionClassifier, RuleBasedTransactionClassifier>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
