@@ -21,6 +21,24 @@ IF NOT EXISTS (SELECT 1 FROM Categories WHERE Id = @Entertainment)
 IF NOT EXISTS (SELECT 1 FROM Categories WHERE Id = @Income)
 	INSERT INTO Categories (Id, Name, Description) VALUES (@Income, 'Income', 'Salary and other income');
 
+-- Remaining categories, matched by name so the script doesn't duplicate ones created elsewhere.
+DECLARE @MoreCategories TABLE (Name nvarchar(100), Description nvarchar(400));
+INSERT INTO @MoreCategories VALUES
+	(N'Eating out',            N'Restaurants, cafés, food delivery, cakes'),
+	(N'Health & beauty',       N'Pharmacies, clinics, labs, dentist, vet, gym, drugstore, perfume'),
+	(N'Shopping',              N'Clothes, shoes, online shops, books, toys, deliveries'),
+	(N'Home',                  N'Household goods, home & garden'),
+	(N'Utilities & phone',     N'Phone, internet, electricity, gas'),
+	(N'Travel',                N'Hotels, trips, travel agencies'),
+	(N'Transfers',             N'Between own accounts, to/from people'),
+	(N'Savings & investments', N'Brokerage, mutual funds'),
+	(N'Cash',                  N'ATM withdrawals'),
+	(N'Other',                 N'Anything that does not fit');
+
+INSERT INTO Categories (Id, Name, Description)
+SELECT NEWID(), c.Name, c.Description FROM @MoreCategories c
+WHERE NOT EXISTS (SELECT 1 FROM Categories x WHERE x.Name = c.Name);
+
 IF NOT EXISTS (SELECT 1 FROM ImportBatches WHERE Id = @Batch)
 	INSERT INTO ImportBatches (Id, FileName, ImportedAt, ImportedCount, SkippedCount)
 	VALUES (@Batch, 'mock-data.csv', SYSUTCDATETIME(), 5, 0);

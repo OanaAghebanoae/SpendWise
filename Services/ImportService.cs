@@ -5,7 +5,7 @@ using SpendWise.Models;
 
 namespace SpendWise.Services;
 
-public sealed class ImportService(SpendWiseDbContext db, ICsvTransactionParser parser)
+public sealed class ImportService(SpendWiseDbContext db, ICsvTransactionParser parser, ITransactionClassifier classifier)
 {
     public async Task<ImportResultDto> ImportAsync(string fileName, Stream stream, CancellationToken cancellationToken)
     {
@@ -20,6 +20,9 @@ public sealed class ImportService(SpendWiseDbContext db, ICsvTransactionParser p
         }
         db.ImportBatches.Add(batch);
         await db.SaveChangesAsync(cancellationToken);
-        return new ImportResultDto(batch.Id, batch.ImportedCount, batch.SkippedCount, parsed.Errors);
+
+        // Categorize the new rows straight away using the stored rules.
+        var classification = await classifier.ApplyAsync(cancellationToken);
+        return new ImportResultDto(batch.Id, batch.ImportedCount, batch.SkippedCount, parsed.Errors, classification.ClassifiedCount);
     }
 }

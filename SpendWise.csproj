@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -13,13 +13,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.14" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.14">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.0.1" />
+    <!-- Override the vulnerable 9.0.11 pulled in by Microsoft.Data.SqlClient (NU1902/NU1903). -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="SpendWise.Tests/**/*.cs" />
-    <EmbeddedResource Remove="SpendWise.Tests/**/*.resx" />
-    <None Remove="SpendWise.Tests/**/*.cs" />
-  </ItemGroup>
+  <PropertyGroup>
+    <!-- The test project lives in a subfolder: keep ALL of its files (sources, bin, obj) out of the web project. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);SpendWise.Tests/**</DefaultItemExcludes>
+  </PropertyGroup>
 
 </Project>

@@ -44,6 +44,43 @@ namespace SpendWise.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("SpendWise.Models.CategoryRule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Field")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Match")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Pattern")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("Field", "Match", "Pattern")
+                        .IsUnique();
+
+                    b.ToTable("CategoryRules");
+                });
+
             modelBuilder.Entity("SpendWise.Models.ImportBatch", b =>
                 {
                     b.Property<Guid>("Id")
@@ -135,6 +172,17 @@ namespace SpendWise.Data.Migrations
                         .HasFilter("[Reference] IS NOT NULL");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("SpendWise.Models.CategoryRule", b =>
+                {
+                    b.HasOne("SpendWise.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("SpendWise.Models.Transaction", b =>

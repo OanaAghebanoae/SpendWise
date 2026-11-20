@@ -10,4 +10,7 @@ public sealed class ClassificationController(ITransactionClassifier classifier) 
 {
     [HttpPost("proposals")]
     public async Task<ActionResult<IReadOnlyList<ClassificationProposalDto>>> Propose(CancellationToken cancellationToken) => Ok(await classifier.ProposeAsync(cancellationToken));
+
+    [HttpPost("apply")]
+    public async Task<ActionResult<ClassificationApplyResultDto>> Apply(CancellationToken cancellationToken) => Ok(await classifier.ApplyAsync(cancellationToken));
 }
